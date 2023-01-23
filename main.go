@@ -8,5 +8,5 @@ import (
 func main() {
 	db.InitDB()
 	r := api.InitRoutes()
-	r.Run(":2323")
+	r.Run()
 }
