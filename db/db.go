@@ -1,6 +1,7 @@
 package db
 
 import (
+	"anonichat-pgx-stdlib/utils"
 	"database/sql"
 	"log"
 
@@ -11,7 +12,7 @@ var DB *sql.DB
 
 func InitDB() {
 	var err error
-	DB, err = sql.Open("pgx", "postgres://yzwzagyo:9-rTL5cubS2j7ILQVPonpjJPhvYkg0Yk@topsy.db.elephantsql.com/yzwzagyo")
+	DB, err = sql.Open("pgx", utils.GetEnv("DB_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
