@@ -14,6 +14,8 @@ func InitRoutes() *gin.Engine {
 	r.GET("/getAllPosts", GetAllPosts)
 	r.POST("/post", CreatePost)
 	r.DELETE("/post/:id", DeletePost)
+	r.GET("/getLikesByPostID/:pid", GetLikesByPostID)
+	r.POST("/addLikeToPostID/:pid", AddLikeToPostID)
 
 	return r
 }

@@ -60,3 +60,46 @@ func DeletePost(ctx *gin.Context) {
 	}
 	utils.RetSucc(ctx, "berhasil menghapus post", nil)
 }
+
+func GetLikesByPostID(ctx *gin.Context) {
+	pidStr := ctx.Param("pid")
+	pid, err := strconv.Atoi(pidStr)
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	pls, err := repos.GetLikesByPostID(uint(pid))
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	utils.RetSucc(ctx, "berhasil GetPostLikesByID", pls)
+}
+
+func AddLikeToPostID(ctx *gin.Context) {
+	pl := models.PostLike{}
+
+	pidStr := ctx.Param("pid")
+	pid, err := strconv.Atoi(pidStr)
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	pl.PostId = int32(pid)
+	uid, err := utils.ExtractTokenID(ctx)
+	if err != nil {
+		utils.RetBadReq(ctx, errors.New("terjadi kendala sesi login, harap login kembali"))
+		return
+	}
+	if uid == 0 {
+		utils.RetBadReq(ctx, errors.New("login tidak sah, harap login kembali"))
+		return
+	}
+	pl.UserId = int32(uid)
+	err = repos.AddLikeToPostID(uint(pl.PostId), uint(pl.UserId))
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	utils.RetSucc(ctx, "berhasil menyukai post", nil)
+}
