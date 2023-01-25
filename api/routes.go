@@ -1,6 +1,8 @@
 package api
 
 import (
+	"anonichat-pgx-stdlib/middlewares"
+
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
@@ -11,11 +13,13 @@ func InitRoutes() *gin.Engine {
 	r.POST("/auth/register", Register)
 	r.POST("/auth/login", Login)
 
-	r.GET("/getAllPosts", GetAllPosts)
-	r.POST("/post", CreatePost)
-	r.DELETE("/post/:id", DeletePost)
-	r.GET("/getLikesByPostID/:pid", GetLikesByPostID)
-	r.POST("/addLikeToPostID/:pid", AddLikeToPostID)
+	u := r.Group("/u")
+	u.Use(middlewares.JwtAuthMiddleware())
+	u.GET("/getAllPosts", GetAllPosts)
+	u.POST("/post", CreatePost)
+	u.DELETE("/post/:id", DeletePost)
+	u.GET("/getLikesByPostID/:pid", GetLikesByPostID)
+	u.POST("/addLikeToPostID/:pid", AddLikeToPostID)
 
 	return r
 }
