@@ -34,6 +34,13 @@ func RetBadReq(ctx *gin.Context, err error) {
 	ctx.JSON(http.StatusBadRequest, r)
 }
 
+func RetUnauth(ctx *gin.Context, err error) {
+	r := models.Response{}
+	r.StatusCode = "02"
+	r.Description = err.Error()
+	ctx.JSON(http.StatusUnauthorized, r)
+}
+
 func Timer(start time.Time, name string) {
 	elapsed := time.Since(start)
 	log.Printf("%s took %s", name, elapsed)
