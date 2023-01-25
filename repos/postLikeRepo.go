@@ -50,7 +50,7 @@ func AddLikeToPostID(post_id, user_id uint) error {
 func UnLikeFromPostID(post_id, user_id uint) error {
 	defer utils.Timer(time.Now(), "UnLikeFromID")
 	var err error
-	res, err := db.DB.Exec("DELETE FROM post_like where post_id = $1 AND user_id = $2", post_id, user_id)
+	res, err := db.DB.Exec("DELETE FROM post_likes where post_id = $1 AND user_id = $2", post_id, user_id)
 	if err != nil {
 		return err
 	}
