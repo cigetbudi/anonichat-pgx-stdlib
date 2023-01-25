@@ -66,6 +66,6 @@ func Login(ctx *gin.Context) {
 		Token: token,
 	}
 
-	utils.RetSucc(ctx, "berhasil login", t)
+	utils.RetSucc(ctx, "berhasil masuk", t)
 
 }
