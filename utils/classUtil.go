@@ -21,7 +21,7 @@ func GetEnv(key string) string {
 
 func RetSucc(ctx *gin.Context, desc string, data interface{}) {
 	r := models.Response{}
-	r.StatusCode = "01"
+	r.StatusCode = "00"
 	r.Description = desc
 	r.Data = data
 	ctx.JSON(http.StatusOK, r)

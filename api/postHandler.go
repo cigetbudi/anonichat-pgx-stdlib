@@ -103,3 +103,31 @@ func AddLikeToPostID(ctx *gin.Context) {
 	}
 	utils.RetSucc(ctx, "berhasil menyukai post", nil)
 }
+
+func UnLikeFromPostID(ctx *gin.Context) {
+	pl := models.PostLike{}
+
+	pidStr := ctx.Param("pid")
+	pid, err := strconv.Atoi(pidStr)
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	pl.PostId = int32(pid)
+	uid, err := utils.ExtractTokenID(ctx)
+	if err != nil {
+		utils.RetBadReq(ctx, errors.New("terjadi kendala sesi login, harap login kembali"))
+		return
+	}
+	if uid == 0 {
+		utils.RetBadReq(ctx, errors.New("login tidak sah, harap login kembali"))
+		return
+	}
+	pl.UserId = int32(uid)
+	err = repos.UnLikeFromPostID(uint(pl.PostId), uint(pl.UserId))
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	utils.RetSucc(ctx, "berhasil unlike post", nil)
+}
