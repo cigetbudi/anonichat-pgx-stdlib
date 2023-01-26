@@ -10,10 +10,11 @@ import (
 func InitRoutes() *gin.Engine {
 	r := gin.Default()
 	r.Use(gzip.Gzip(gzip.BestCompression))
-	r.POST("/auth/register", Register)
-	r.POST("/auth/login", Login)
+	a := r.Group("/api")
+	a.POST("/auth/register", Register)
+	a.POST("/auth/login", Login)
 
-	u := r.Group("/u")
+	u := a.Group("/u")
 	u.Use(middlewares.JwtAuthMiddleware())
 	u.GET("/getAllPosts", GetAllPosts)
 	u.GET("/getAllPostsByUserID/:user_id", GetAllPostsByUserID)
