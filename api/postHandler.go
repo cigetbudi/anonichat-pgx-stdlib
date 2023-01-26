@@ -146,3 +146,20 @@ func UnLikeFromPostID(ctx *gin.Context) {
 	}
 	utils.RetSucc(ctx, "berhasil unlike post", nil)
 }
+
+func CountLikesPostID(ctx *gin.Context) {
+	pidStr := ctx.Param("pid")
+	cl := models.CountLike{}
+	pid, err := strconv.Atoi(pidStr)
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	count, err := repos.CountLikePostID(uint(pid))
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	cl.Likes = int32(count)
+	utils.RetSucc(ctx, "berhasil count likes", cl)
+}

@@ -8,3 +8,7 @@ type PostLike struct {
 	UserId    int32     `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type CountLike struct {
+	Likes int32 `json:"likes"`
+}

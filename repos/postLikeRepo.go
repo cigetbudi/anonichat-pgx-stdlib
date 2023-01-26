@@ -66,3 +66,13 @@ func UnLikeFromPostID(post_id, user_id uint) error {
 	}
 	return nil
 }
+
+func CountLikePostID(post_id uint) (int, error) {
+	defer utils.Timer(time.Now(), "CountLikePostID")
+	var count int
+	err := db.DB.QueryRow("SELECT COUNT (*) FROM post_likes WHERE post_id = $1", post_id).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}

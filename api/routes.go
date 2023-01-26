@@ -20,6 +20,7 @@ func InitRoutes() *gin.Engine {
 	u.POST("/post", CreatePost)
 	u.DELETE("/post/:pid", DeletePost)
 	u.GET("/getLikesByPostID/:pid", GetLikesByPostID)
+	u.GET("/countLikesPostID/:pid", CountLikesPostID)
 	u.POST("/addLikeToPostID/:pid", AddLikeToPostID)
 	u.POST("/unLikePostFromID/:pid", UnLikeFromPostID)
 
