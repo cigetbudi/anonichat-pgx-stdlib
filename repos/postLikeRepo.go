@@ -32,10 +32,10 @@ func AddLikeToPostID(post_id, user_id uint) error {
 	defer utils.Timer(time.Now(), "addLikeToID")
 	var err error
 	res, err := db.DB.Exec("INSERT INTO post_likes (post_id, user_id, created_at) VALUES ($1, $2, $3)", post_id, user_id, time.Now())
-	if strings.Contains(err.Error(), "duplicate key value") {
-		return errors.New("anda sudah menyukai post ini sebelumnya")
-	}
 	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key value") {
+			return errors.New("anda sudah menyukai post ini sebelumnya")
+		}
 		return err
 	}
 	row, err := res.RowsAffected()

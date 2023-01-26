@@ -47,7 +47,7 @@ func CreatePost(p *models.Post) error {
 func DeletePost(pid, userId uint) error {
 	defer utils.Timer(time.Now(), "deletePost")
 	var err error
-	res, err := db.DB.Exec("UPDATE posts SET update_at = $1 WHERE id = $2 AND user_id = $3", time.Now(), pid, userId)
+	res, err := db.DB.Exec("UPDATE posts SET deleted_at = $1 WHERE id = $2 AND user_id = $3", time.Now(), pid, userId)
 	if err != nil {
 		return err
 	}
