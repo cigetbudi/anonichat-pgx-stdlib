@@ -27,6 +27,25 @@ func GetAllPost() (*[]models.Post, error) {
 	return &ps, nil
 }
 
+func GetAllPostByUserID(uid uint) (*[]models.Post, error) {
+	defer utils.Timer(time.Now(), "getAllPostByUserID")
+	var ps []models.Post
+	rows, err := db.DB.Query("SELECT id, content, location, user_id FROM posts WHERE user_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 50", uid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var p models.Post
+		err = rows.Scan(&p.Id, &p.Content, &p.Location, &p.UserID)
+		if err != nil {
+			return nil, err
+		}
+		ps = append(ps, p)
+	}
+	return &ps, nil
+}
+
 func CreatePost(p *models.Post) error {
 	defer utils.Timer(time.Now(), "createPost")
 	var err error

@@ -19,6 +19,21 @@ func GetAllPosts(ctx *gin.Context) {
 	utils.RetSucc(ctx, "berhasil GetAllPosts", mes)
 }
 
+func GetAllPostsByUserID(ctx *gin.Context) {
+	uidStr := ctx.Param("user_id")
+	uid, err := strconv.Atoi(uidStr)
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	mes, err := repos.GetAllPostByUserID(uint(uid))
+	if err != nil {
+		utils.RetBadReq(ctx, err)
+		return
+	}
+	utils.RetSucc(ctx, "berhasil GetAllPosts by UserID", mes)
+}
+
 func CreatePost(ctx *gin.Context) {
 	var err error
 	p := models.Post{}
@@ -47,7 +62,7 @@ func DeletePost(ctx *gin.Context) {
 		utils.RetBadReq(ctx, err)
 		return
 	}
-	idStr := ctx.Param("id")
+	idStr := ctx.Param("pid")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
