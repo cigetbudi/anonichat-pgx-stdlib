@@ -16,14 +16,14 @@ func InitRoutes() *gin.Engine {
 
 	u := a.Group("/u")
 	u.Use(middlewares.JwtAuthMiddleware())
-	u.GET("/getAllPosts", GetAllPosts)
-	u.GET("/getAllPostsByUserID/:user_id", GetAllPostsByUserID)
+	u.GET("/posts", GetAllPosts)
+	u.GET("/posts/:user_id", GetAllPostsByUserID)
 	u.POST("/post", CreatePost)
 	u.DELETE("/post/:pid", DeletePost)
-	u.GET("/getLikesByPostID/:pid", GetLikesByPostID)
-	u.GET("/countLikesPostID/:pid", CountLikesPostID)
-	u.POST("/addLikeToPostID/:pid", AddLikeToPostID)
-	u.POST("/unLikePostFromID/:pid", UnLikeFromPostID)
+	u.GET("/post/:pid", GetLikesByPostID)
+	u.GET("/likes/:pid", CountLikesPostID)
+	u.POST("/like/:pid", AddLikeToPostID)
+	u.POST("/unlike/:pid", UnLikeFromPostID)
 
 	return r
 }
