@@ -11,8 +11,10 @@ func InitRoutes() *gin.Engine {
 	r := gin.Default()
 	r.Use(gzip.Gzip(gzip.BestCompression))
 	a := r.Group("/api")
-	a.POST("/auth/register", Register)
-	a.POST("/auth/login", Login)
+
+	au := a.Group("/auth")
+	au.POST("/register", Register)
+	au.POST("/login", Login)
 
 	u := a.Group("/u")
 	u.Use(middlewares.JwtAuthMiddleware())
