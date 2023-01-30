@@ -71,6 +71,7 @@ func DeleteCommentFromID(ctx *gin.Context) {
 	err = repos.DeleteCommentFromID(uint(cid), uid)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
+		return
 	}
 	utils.RetSucc(ctx, "berhasil menghapus comment", nil)
 

@@ -59,7 +59,9 @@ func DeleteCommentFromID(id, user_id uint) error {
 	if err != nil {
 		return err
 	}
-	if row != 1 {
+	if row == 0 {
+		return errors.New("data tidak ditemukan/gagal menghapus")
+	} else if row != 1 {
 		return errors.New("data terhapus ada lebih dari 1")
 	}
 	return nil
