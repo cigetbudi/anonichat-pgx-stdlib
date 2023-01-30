@@ -74,7 +74,9 @@ func DeletePost(pid, userId uint) error {
 	if err != nil {
 		return err
 	}
-	if row != 1 {
+	if row == 0 {
+		return errors.New("data tidak ditemukan")
+	} else if row != 1 {
 		return errors.New("data terupdate ada lebih dari 1")
 	}
 	return nil
