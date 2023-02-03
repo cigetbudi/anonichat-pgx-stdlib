@@ -1,8 +1,10 @@
 package models
 
+import "github.com/google/uuid"
+
 type Post struct {
-	Id       int32  `json:"id"`
-	Content  string `json:"content"`
-	Location string `json:"location"`
-	UserID   int64  `json:"user_id"`
+	Id       uuid.UUID `json:"id"`
+	Content  string    `json:"content"`
+	Location string    `json:"location"`
+	UserID   uuid.UUID `json:"user_id"`
 }

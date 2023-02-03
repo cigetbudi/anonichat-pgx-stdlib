@@ -1,9 +1,11 @@
 package models
 
+import "github.com/google/uuid"
+
 type Comment struct {
-	Id       int32  `json:"id"`
-	PostId   int64  `json:"post_id"`
-	UserId   int64  `json:"user_id"`
-	Comment  string `json:"comment"`
-	Location string `json:"location"`
+	Id       uuid.UUID `json:"id"`
+	PostId   uuid.UUID `json:"post_id"`
+	UserId   uuid.UUID `json:"user_id"`
+	Comment  string    `json:"comment"`
+	Location string    `json:"location"`
 }

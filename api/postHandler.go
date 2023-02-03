@@ -5,9 +5,9 @@ import (
 	"anonichat-pgx-stdlib/repos"
 	"anonichat-pgx-stdlib/utils"
 	"errors"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func GetAllPosts(ctx *gin.Context) {
@@ -21,12 +21,12 @@ func GetAllPosts(ctx *gin.Context) {
 
 func GetAllPostsByUserID(ctx *gin.Context) {
 	uidStr := ctx.Param("user_id")
-	uid, err := strconv.Atoi(uidStr)
+	uid, err := uuid.Parse(uidStr)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
 	}
-	mes, err := repos.GetAllPostByUserID(uint(uid))
+	mes, err := repos.GetAllPostByUserID(uid)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
@@ -46,7 +46,7 @@ func CreatePost(ctx *gin.Context) {
 		utils.RetBadReq(ctx, errors.New("login tidak sah, harap login kembali"))
 		return
 	}
-	p.UserID = int64(uid)
+	p.UserID = uid
 	err = repos.CreatePost(&p)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
@@ -63,103 +63,15 @@ func DeletePost(ctx *gin.Context) {
 		return
 	}
 	idStr := ctx.Param("pid")
-	id, err := strconv.Atoi(idStr)
+	id, err := uuid.Parse(idStr)
 	if err != nil {
-		utils.RetBadReq(ctx, err)
+		utils.RetBadReq(ctx, errors.New("post_id tidak valid"))
 		return
 	}
-	err = repos.DeletePost(uint(id), user_id)
+	err = repos.DeletePost(id, user_id)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
 	}
 	utils.RetSucc(ctx, "berhasil menghapus post", nil)
-}
-
-func GetLikesByPostID(ctx *gin.Context) {
-	pidStr := ctx.Param("pid")
-	pid, err := strconv.Atoi(pidStr)
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	pls, err := repos.GetLikesByPostID(uint(pid))
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	utils.RetSucc(ctx, "berhasil GetPostLikesByID", pls)
-}
-
-func AddLikeToPostID(ctx *gin.Context) {
-	pl := models.PostLike{}
-
-	pidStr := ctx.Param("pid")
-	pid, err := strconv.Atoi(pidStr)
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	pl.PostId = int32(pid)
-	uid, err := utils.ExtractTokenID(ctx)
-	if err != nil {
-		utils.RetBadReq(ctx, errors.New("terjadi kendala sesi login, harap login kembali"))
-		return
-	}
-	if uid == 0 {
-		utils.RetBadReq(ctx, errors.New("login tidak sah, harap login kembali"))
-		return
-	}
-	pl.UserId = int32(uid)
-	err = repos.AddLikeToPostID(uint(pl.PostId), uint(pl.UserId))
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	utils.RetSucc(ctx, "berhasil menyukai post", nil)
-}
-
-func UnLikeFromPostID(ctx *gin.Context) {
-	pl := models.PostLike{}
-
-	pidStr := ctx.Param("pid")
-	pid, err := strconv.Atoi(pidStr)
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	pl.PostId = int32(pid)
-	uid, err := utils.ExtractTokenID(ctx)
-	if err != nil {
-		utils.RetBadReq(ctx, errors.New("terjadi kendala sesi login, harap login kembali"))
-		return
-	}
-	if uid == 0 {
-		utils.RetBadReq(ctx, errors.New("login tidak sah, harap login kembali"))
-		return
-	}
-	pl.UserId = int32(uid)
-	err = repos.UnLikeFromPostID(uint(pl.PostId), uint(pl.UserId))
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	utils.RetSucc(ctx, "berhasil unlike post", nil)
-}
-
-func CountLikesPostID(ctx *gin.Context) {
-	pidStr := ctx.Param("pid")
-	cl := models.CountLike{}
-	pid, err := strconv.Atoi(pidStr)
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	count, err := repos.CountLikePostID(uint(pid))
-	if err != nil {
-		utils.RetBadReq(ctx, err)
-		return
-	}
-	cl.Likes = int32(count)
-	utils.RetSucc(ctx, "berhasil count likes", cl)
 }

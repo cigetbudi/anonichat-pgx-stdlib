@@ -8,9 +8,10 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
-func GenerateToken(userid uint) (string, error) {
+func GenerateToken(userid uuid.UUID) (string, error) {
 	tok_lifespan, err := strconv.Atoi(GetEnv("TOKEN_LIFESPAN"))
 	if err != nil {
 		return "", err
@@ -49,7 +50,7 @@ func ExtractToken(ctx *gin.Context) string {
 	return ""
 }
 
-func ExtractTokenID(ctx *gin.Context) (uint, error) {
+func ExtractTokenID(ctx *gin.Context) (uuid.UUID, error) {
 	tokString := ExtractToken(ctx)
 	token, err := jwt.Parse(tokString, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -58,16 +59,16 @@ func ExtractTokenID(ctx *gin.Context) (uint, error) {
 		return []byte(GetEnv("SECRET")), nil
 	})
 	if err != nil {
-		return 0, nil
+		return uuid.Nil, nil
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
-		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["user_id"]), 10, 32)
+		uid, err := uuid.Parse(fmt.Sprint(claims["user_id"]))
 		if err != nil {
-			return 0, nil
+			return uuid.Nil, nil
 		}
-		return uint(uid), nil
+		return uid, nil
 	}
-	return 0, nil
+	return uuid.Nil, nil
 
 }

@@ -6,12 +6,14 @@ import (
 	"anonichat-pgx-stdlib/utils"
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func GetAllPost() (*[]models.Post, error) {
 	defer utils.Timer(time.Now(), "getAllPost")
 	var ps []models.Post
-	rows, err := db.DB.Query("SELECT id, content, location, user_id FROM posts WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 50")
+	rows, err := db.DBN.Query("SELECT id, content, location, user_id FROM posts WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 50")
 	if err != nil {
 		return nil, err
 	}
@@ -27,10 +29,10 @@ func GetAllPost() (*[]models.Post, error) {
 	return &ps, nil
 }
 
-func GetAllPostByUserID(uid uint) (*[]models.Post, error) {
+func GetAllPostByUserID(uid uuid.UUID) (*[]models.Post, error) {
 	defer utils.Timer(time.Now(), "getAllPostByUserID")
 	var ps []models.Post
-	rows, err := db.DB.Query("SELECT id, content, location, user_id FROM posts WHERE user_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 50", uid)
+	rows, err := db.DBN.Query("SELECT id, content, location, user_id FROM posts WHERE user_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 50", uid)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +51,7 @@ func GetAllPostByUserID(uid uint) (*[]models.Post, error) {
 func CreatePost(p *models.Post) error {
 	defer utils.Timer(time.Now(), "createPost")
 	var err error
-	res, err := db.DB.Exec("INSERT INTO posts (content, location, created_at, user_id) values ($1, $2, $3, $4)", p.Content, p.Location, time.Now(), p.UserID)
+	res, err := db.DBN.Exec("INSERT INTO posts (content, location, created_at, user_id) values ($1, $2, $3, $4)", p.Content, p.Location, time.Now(), p.UserID)
 	if err != nil {
 		return err
 	}
@@ -63,10 +65,10 @@ func CreatePost(p *models.Post) error {
 	return nil
 }
 
-func DeletePost(pid, userId uint) error {
+func DeletePost(pid, userId uuid.UUID) error {
 	defer utils.Timer(time.Now(), "deletePost")
 	var err error
-	res, err := db.DB.Exec("UPDATE posts SET deleted_at = $1 WHERE id = $2 AND user_id = $3", time.Now(), pid, userId)
+	res, err := db.DBN.Exec("UPDATE posts SET deleted_at = $1 WHERE id = $2 AND user_id = $3", time.Now(), pid, userId)
 	if err != nil {
 		return err
 	}

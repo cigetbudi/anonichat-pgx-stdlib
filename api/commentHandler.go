@@ -5,10 +5,20 @@ import (
 	"anonichat-pgx-stdlib/repos"
 	"anonichat-pgx-stdlib/utils"
 	"errors"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
+
+// import (
+// 	"anonichat-pgx-stdlib/models"
+// 	"anonichat-pgx-stdlib/repos"
+// 	"anonichat-pgx-stdlib/utils"
+// 	"errors"
+// 	"strconv"
+
+// 	"github.com/gin-gonic/gin"
+// )
 
 func AddComment(ctx *gin.Context) {
 	var err error
@@ -24,13 +34,13 @@ func AddComment(ctx *gin.Context) {
 	}
 
 	idStr := ctx.Param("pid")
-	id, err := strconv.Atoi(idStr)
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
 	}
-	c.UserId = int64(uid)
-	c.PostId = int64(id)
+	c.UserId = uid
+	c.PostId = id
 	err = repos.AddComment(&c)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
@@ -42,12 +52,12 @@ func AddComment(ctx *gin.Context) {
 func GetCommentsFromPostID(ctx *gin.Context) {
 	var err error
 	pidStr := ctx.Param("pid")
-	pid, err := strconv.Atoi(pidStr)
+	pid, err := uuid.Parse(pidStr)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
 	}
-	cs, err := repos.GetCommentsFromPostID(uint(pid))
+	cs, err := repos.GetCommentsFromPostID(pid)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
@@ -58,7 +68,7 @@ func GetCommentsFromPostID(ctx *gin.Context) {
 func DeleteCommentFromID(ctx *gin.Context) {
 	var err error
 	cidStr := ctx.Param("cid")
-	cid, err := strconv.Atoi(cidStr)
+	cid, err := uuid.Parse(cidStr)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return
@@ -68,7 +78,7 @@ func DeleteCommentFromID(ctx *gin.Context) {
 		utils.RetBadReq(ctx, errors.New("login tidak sah, harap login kembali"))
 		return
 	}
-	err = repos.DeleteCommentFromID(uint(cid), uid)
+	err = repos.DeleteCommentFromID(cid, uid)
 	if err != nil {
 		utils.RetBadReq(ctx, err)
 		return

@@ -6,12 +6,14 @@ import (
 	"anonichat-pgx-stdlib/utils"
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func AddComment(c *models.Comment) error {
 	defer utils.Timer(time.Now(), "addComment")
 	var err error
-	res, err := db.DB.Exec("INSERT INTO comments (post_id, user_id, comment, created_at, location) VALUES ($1, $2, $3, $4, $5)", c.PostId, c.UserId, c.Comment, time.Now(), c.Location)
+	res, err := db.DBN.Exec("INSERT INTO comments (post_id, user_id, comment, created_at, location) VALUES ($1, $2, $3, $4, $5)", c.PostId, c.UserId, c.Comment, time.Now(), c.Location)
 	if err != nil {
 		return err
 	}
@@ -25,7 +27,7 @@ func AddComment(c *models.Comment) error {
 	return nil
 }
 
-func GetCommentsFromPostID(post_id uint) (*[]models.Comment, error) {
+func GetCommentsFromPostID(post_id uuid.UUID) (*[]models.Comment, error) {
 	defer utils.Timer(time.Now(), "getCommentsFromPostID")
 	var (
 		err error
@@ -33,7 +35,7 @@ func GetCommentsFromPostID(post_id uint) (*[]models.Comment, error) {
 		c   models.Comment
 	)
 
-	rows, err := db.DB.Query("SELECT id,  user_id, post_id, comment, location FROM comments WHERE post_id = $1 AND deleted_at IS NULL", post_id)
+	rows, err := db.DBN.Query("SELECT id,  user_id, post_id, comment, location FROM comments WHERE post_id = $1 AND deleted_at IS NULL", post_id)
 	if err != nil {
 		return nil, err
 	}
@@ -48,10 +50,10 @@ func GetCommentsFromPostID(post_id uint) (*[]models.Comment, error) {
 	return &cs, nil
 }
 
-func DeleteCommentFromID(id, user_id uint) error {
+func DeleteCommentFromID(id, user_id uuid.UUID) error {
 	defer utils.Timer(time.Now(), "deleteCommentFromID")
 	var err error
-	res, err := db.DB.Exec("UPDATE comments SET deleted_at = $1 WHERE id = $2 AND user_id = $3", time.Now(), id, user_id)
+	res, err := db.DBN.Exec("UPDATE comments SET deleted_at = $1 WHERE id = $2 AND user_id = $3", time.Now(), id, user_id)
 	if err != nil {
 		return err
 	}

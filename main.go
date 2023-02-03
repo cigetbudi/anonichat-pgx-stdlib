@@ -7,6 +7,7 @@ import (
 
 func main() {
 	db.InitDB()
+	db.InitDBNEon()
 	r := api.InitRoutes()
 	r.Run()
 }

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,7 +27,7 @@ func AddUser(u *models.User) error {
 		return err
 	}
 
-	res, err := db.DB.Exec("INSERT INTO USERS (username,fullname,password,email,created_at,dob) values($1,$2,$3,$4,$5,$6)", u.Username, u.Fullname, hashedPassword, u.Email, time.Now(), dob)
+	res, err := db.DBN.Exec("INSERT INTO USERS (username,fullname,password,email,created_at,dob) values($1,$2,$3,$4,$5,$6)", u.Username, u.Fullname, hashedPassword, u.Email, time.Now(), dob)
 	if err != nil {
 		return err
 	}
@@ -48,7 +49,7 @@ func VerifyPassword(pass, hashedPass string) error {
 func AddLastLogin(username string) error {
 	defer utils.Timer(time.Now(), "Add Last Login")
 
-	res, err := db.DB.Exec("UPDATE users SET last_login = $1 , WHERE username = $2", time.Now(), username)
+	res, err := db.DBN.Exec("UPDATE users SET last_login = $1 , WHERE username = $2", time.Now(), username)
 	if err != nil {
 		return err
 	}
@@ -66,7 +67,7 @@ func CheckLoginAttemp(username string) (uint, error) {
 	defer utils.Timer(time.Now(), "Check Login Attempt")
 	var logCount uint
 
-	err := db.DB.QueryRow("SELECT login_attempt FROM users where username = $1 ", username).Scan(&logCount)
+	err := db.DBN.QueryRow("SELECT login_attempt FROM users where username = $1 ", username).Scan(&logCount)
 	if err != nil {
 		return 4, err
 	}
@@ -79,10 +80,10 @@ func LoginCheck(username, password string) (string, error) {
 		un  string
 		pa  string
 		err error
-		id  uint
+		id  uuid.UUID
 	)
 
-	err = db.DB.QueryRow("SELECT id, username, password FROM users WHERE username = $1", username).Scan(&id, &un, &pa)
+	err = db.DBN.QueryRow("SELECT id, username, password FROM users WHERE username = $1", username).Scan(&id, &un, &pa)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +99,7 @@ func LoginCheck(username, password string) (string, error) {
 	}
 	defer utils.Timer(time.Now(), "Update Last Login")
 
-	_, err = db.DB.Exec("UPDATE users SET last_login = $1 WHERE id = $2 ", time.Now(), id)
+	_, err = db.DBN.Exec("UPDATE users SET last_login = $1 WHERE id = $2 ", time.Now(), id)
 	if err != nil {
 		return "", err
 	}
@@ -109,7 +110,7 @@ func LoginCheck(username, password string) (string, error) {
 func AddLoginAttemp(username string) error {
 	defer utils.Timer(time.Now(), "Add Login Attempt")
 
-	_, err := db.DB.Exec("UPDATE users SET login_attempt = login_attempt + 1 WHERE username = $1", username)
+	_, err := db.DBN.Exec("UPDATE users SET login_attempt = login_attempt + 1 WHERE username = $1", username)
 	if err != nil {
 		return err
 	}
