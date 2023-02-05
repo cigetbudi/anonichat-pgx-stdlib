@@ -15,6 +15,7 @@ func InitRoutes() *gin.Engine {
 	au := a.Group("/auth")
 	au.POST("/register", Register)
 	au.POST("/login", Login)
+	au.GET("/genders", GetAllGenders)
 
 	u := a.Group("/u")
 	u.Use(middlewares.JwtAuthMiddleware())

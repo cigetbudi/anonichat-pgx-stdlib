@@ -22,12 +22,14 @@ func AddUser(u *models.User) error {
 
 	u.Password = string(hashedPassword)
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
+	u.Phone = html.EscapeString(strings.TrimSpace(u.Phone))
+	u.Phone = strings.Replace(u.Phone, "-", "", -1)
 	dob, err := time.Parse("2006-01-02", u.DOB)
 	if err != nil {
 		return err
 	}
 
-	res, err := db.DBN.Exec("INSERT INTO USERS (username,fullname,password,email,created_at,dob) values($1,$2,$3,$4,$5,$6)", u.Username, u.Fullname, hashedPassword, u.Email, time.Now(), dob)
+	res, err := db.DBN.Exec("INSERT INTO USERS (username,fullname,password,email,created_at,dob, phone, gender_code) values($1,$2,$3,$4,$5,$6,$7,$8)", u.Username, u.Fullname, hashedPassword, u.Email, time.Now(), dob, u.Phone, u.GenderCode)
 	if err != nil {
 		return err
 	}
